@@ -1,0 +1,41 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Pedidos</h1>
+    <a routerLink="/orders/new" class="btn btn-primary">Nuevo pedido</a>
+  </div>
+
+  <div class="d-flex gap-2 mb-3">
+    <select class="form-select w-auto" (change)="onStatusChange($any($event.target).value)">
+      <option value="">Todos</option>
+      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+    </select>
+
+    <button class="btn btn-secondary" (click)="runBatch()">Ejecutar batch</button>
+  </div>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.id }}</td>
+        <td>{{ order.customerName }}</td>
+        <td>{{ order.product }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.status }}</td>
+        <td>{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+      </tr>
+      <tr *ngIf="orders.length === 0">
+        <td colspan="6" class="text-center text-muted">No hay pedidos</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
