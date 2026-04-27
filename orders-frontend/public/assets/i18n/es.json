@@ -1,0 +1,43 @@
+{
+  "orders": {
+    "title": "Pedidos",
+    "actions": {
+      "create": "Crear pedido",
+      "runBatch": "Ejecutar batch",
+      "cancel": "Cancelar"
+    },
+    "filter": {
+      "all": "Todos"
+    },
+    "table": {
+      "id": "ID",
+      "customer": "Cliente",
+      "product": "Producto",
+      "quantity": "Cantidad",
+      "status": "Estado",
+      "date": "Fecha",
+      "empty": "No hay pedidos"
+    },
+    "form": {
+      "customer": {
+        "label": "Cliente",
+        "placeholder": "Nombre del cliente",
+        "required": "El nombre del cliente es obligatorio"
+      },
+      "product": {
+        "label": "Producto",
+        "placeholder": "Seleccione un producto",
+        "required": "El producto es obligatorio"
+      },
+      "quantity": {
+        "label": "Unidades"
+      }
+    },
+    "notifications": {
+      "batchSuccess": "Batch ejecutado correctamente",
+      "errorLoad": "Error al cargar los pedidos",
+      "errorCreate": "Error al crear el pedido",
+      "errorBatch": "Error al ejecutar el batch"
+    }
+  }
+}

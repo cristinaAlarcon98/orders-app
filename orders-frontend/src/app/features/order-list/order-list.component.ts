@@ -3,19 +3,21 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Order, ORDER_STATUSES, OrderStatus, PRODUCTS } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order.service';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, TranslatePipe],
   templateUrl: './order-list.component.html'
 })
 export class OrderListComponent implements OnInit {
   @ViewChild('orderModal') orderModal!: TemplateRef<unknown>;
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
   private readonly allOrders = signal<Order[]>([]);
 
   readonly statusFilter = signal<OrderStatus | ''>('');
@@ -77,7 +79,7 @@ export class OrderListComponent implements OnInit {
           this.statusFilter.set('');
           this.loadOrders();
         },
-        error: () => alert('Error al crear el pedido')
+        error: () => alert(this.translate.instant('orders.notifications.errorCreate'))
       });
   }
 
@@ -87,10 +89,10 @@ export class OrderListComponent implements OnInit {
       .subscribe({
         next: () => {
           this.statusFilter.set('');
-          alert('Batch ejecutado correctamente');
+          alert(this.translate.instant('orders.notifications.batchSuccess'));
           this.loadOrders();
         },
-        error: () => alert('Error al ejecutar el batch')
+        error: () => alert(this.translate.instant('orders.notifications.errorBatch'))
       });
   }
 
@@ -99,7 +101,7 @@ export class OrderListComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (orders) => this.allOrders.set(orders ?? []),
-        error: () => alert('Error al cargar los pedidos')
+        error: () => alert(this.translate.instant('orders.notifications.errorLoad'))
       });
   }
 }

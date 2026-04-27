@@ -1,29 +1,29 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3">Pedidos</h1>
-    <button class="btn btn-primary" (click)="openModal()">Crear pedido</button>
+    <h1 class="h3">{{ 'orders.title' | translate }}</h1>
+    <button class="btn btn-primary" (click)="openModal()">{{ 'orders.actions.create' | translate }}</button>
   </div>
 
   <div class="d-flex gap-2 mb-3">
     <select class="form-select w-auto" (change)="onFilterChange($event)">
-      <option value="">Todos</option>
+      <option value="">{{ 'orders.filter.all' | translate }}</option>
       @for (s of statuses; track s) {
         <option [value]="s">{{ s }}</option>
       }
     </select>
 
-    <button class="btn btn-secondary" (click)="runBatch()">Ejecutar batch</button>
+    <button class="btn btn-secondary" (click)="runBatch()">{{ 'orders.actions.runBatch' | translate }}</button>
   </div>
 
   <table class="table table-bordered table-hover">
     <thead class="table-dark">
       <tr>
-        <th>ID</th>
-        <th>Cliente</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Estado</th>
-        <th>Fecha</th>
+        <th>{{ 'orders.table.id' | translate }}</th>
+        <th>{{ 'orders.table.customer' | translate }}</th>
+        <th>{{ 'orders.table.product' | translate }}</th>
+        <th>{{ 'orders.table.quantity' | translate }}</th>
+        <th>{{ 'orders.table.status' | translate }}</th>
+        <th>{{ 'orders.table.date' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -47,7 +47,7 @@
       }
       @if (orders().length === 0) {
         <tr>
-          <td colspan="6" class="text-center text-muted">No hay pedidos</td>
+          <td colspan="6" class="text-center text-muted">{{ 'orders.table.empty' | translate }}</td>
         </tr>
       }
     </tbody>
@@ -56,41 +56,41 @@
 
 <ng-template #orderModal>
   <div class="modal-header">
-    <h5 class="modal-title">Crear pedido</h5>
+    <h5 class="modal-title">{{ 'orders.actions.create' | translate }}</h5>
     <button type="button" class="btn-close" (click)="closeModal()"></button>
   </div>
 
   <div class="modal-body">
     <form [formGroup]="form" id="orderForm" (ngSubmit)="submit()">
       <div class="mb-3">
-        <label class="form-label">Cliente</label>
+        <label class="form-label">{{ 'orders.form.customer.label' | translate }}</label>
         <input
           type="text"
           class="form-control"
           formControlName="customerName"
-          placeholder="Nombre del cliente"
+          [placeholder]="'orders.form.customer.placeholder' | translate"
           [class.is-invalid]="customerName.invalid && customerName.touched"
         />
-        <div class="invalid-feedback">El nombre del cliente es obligatorio</div>
+        <div class="invalid-feedback">{{ 'orders.form.customer.required' | translate }}</div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Producto</label>
+        <label class="form-label">{{ 'orders.form.product.label' | translate }}</label>
         <select
           class="form-select"
           formControlName="product"
           [class.is-invalid]="product.invalid && product.touched"
         >
-          <option value="" disabled>Seleccione un producto</option>
+          <option value="" disabled>{{ 'orders.form.product.placeholder' | translate }}</option>
           @for (p of products; track p) {
             <option [value]="p">{{ p }}</option>
           }
         </select>
-        <div class="invalid-feedback">El producto es obligatorio</div>
+        <div class="invalid-feedback">{{ 'orders.form.product.required' | translate }}</div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Unidades</label>
+        <label class="form-label">{{ 'orders.form.quantity.label' | translate }}</label>
         <input
           type="number"
           class="form-control"
@@ -102,7 +102,7 @@
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Cancelar</button>
-    <button type="submit" form="orderForm" class="btn btn-primary" [disabled]="form.invalid">Crear pedido</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">{{ 'orders.actions.cancel' | translate }}</button>
+    <button type="submit" form="orderForm" class="btn btn-primary" [disabled]="form.invalid">{{ 'orders.actions.create' | translate }}</button>
   </div>
 </ng-template>
