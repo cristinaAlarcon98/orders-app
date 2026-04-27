@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -14,8 +14,14 @@ import { OrderService } from '../../core/services/order.service';
 export class OrderListComponent implements OnInit {
   @ViewChild('orderModal') orderModal!: TemplateRef<any>;
 
-  orders: Order[] = [];
-  selectedStatus: OrderStatus | undefined;
+  private allOrders = signal<Order[]>([]);
+  readonly statusFilter = signal<string>('');
+  readonly orders = computed(() => {
+    const status = this.statusFilter();
+    const all = this.allOrders();
+    return status ? all.filter(o => o.status === status) : all;
+  });
+
   form: FormGroup;
 
   private modalRef?: NgbModalRef;
@@ -40,15 +46,10 @@ export class OrderListComponent implements OnInit {
   }
 
   loadOrders(): void {
-    this.orderService.getOrders(this.selectedStatus).subscribe({
-      next: (orders) => (this.orders = orders),
+    this.orderService.getOrders().subscribe({
+      next: (orders) => this.allOrders.set(orders ?? []),
       error: () => alert('Error al cargar los pedidos')
     });
-  }
-
-  onStatusChange(status: string): void {
-    this.selectedStatus = status ? (status as OrderStatus) : undefined;
-    this.loadOrders();
   }
 
   openModal(): void {
@@ -66,6 +67,7 @@ export class OrderListComponent implements OnInit {
     this.orderService.createOrder(this.form.value).subscribe({
       next: () => {
         this.closeModal();
+        this.statusFilter.set('');
         this.loadOrders();
       },
       error: () => alert('Error al crear el pedido')
@@ -75,6 +77,7 @@ export class OrderListComponent implements OnInit {
   runBatch(): void {
     this.orderService.runBatch().subscribe({
       next: () => {
+        this.statusFilter.set('');
         alert('Batch ejecutado correctamente');
         this.loadOrders();
       },

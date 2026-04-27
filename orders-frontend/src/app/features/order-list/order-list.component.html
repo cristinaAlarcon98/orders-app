@@ -5,7 +5,7 @@
   </div>
 
   <div class="d-flex gap-2 mb-3">
-    <select class="form-select w-auto" (change)="onStatusChange($any($event.target).value)">
+    <select class="form-select w-auto" (change)="statusFilter.set($any($event.target).value)">
       <option value="">Todos</option>
       @for (s of statuses; track s) {
         <option [value]="s">{{ s }}</option>
@@ -27,17 +27,25 @@
       </tr>
     </thead>
     <tbody>
-      @for (order of orders; track order.id) {
+      @for (order of orders(); track order.id) {
         <tr>
           <td>{{ order.id }}</td>
           <td>{{ order.customerName }}</td>
           <td>{{ order.product }}</td>
           <td>{{ order.quantity }}</td>
-          <td>{{ order.status }}</td>
+          <td>
+            <span class="badge"
+              [class.bg-warning]="order.status === 'NEW'"
+              [class.text-dark]="order.status === 'NEW'"
+              [class.bg-success]="order.status === 'PROCESSED'"
+              [class.bg-danger]="order.status === 'FAILED'">
+              {{ order.status }}
+            </span>
+          </td>
           <td>{{ order.createdAt | date:'d MMM y, HH:mm' }}</td>
         </tr>
       }
-      @if (orders.length === 0) {
+      @if (orders().length === 0) {
         <tr>
           <td colspan="6" class="text-center text-muted">No hay pedidos</td>
         </tr>
