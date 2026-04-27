@@ -1,8 +1,9 @@
-import { Component, OnInit, TemplateRef, ViewChild, signal, computed } from '@angular/core';
+import { Component, DestroyRef, OnInit, TemplateRef, ViewChild, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { Order, OrderStatus, PRODUCTS } from '../../shared/models/order.model';
+import { Order, ORDER_STATUSES, OrderStatus, PRODUCTS } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order.service';
 
 @Component({
@@ -12,44 +13,48 @@ import { OrderService } from '../../core/services/order.service';
   templateUrl: './order-list.component.html'
 })
 export class OrderListComponent implements OnInit {
-  @ViewChild('orderModal') orderModal!: TemplateRef<any>;
+  @ViewChild('orderModal') orderModal!: TemplateRef<unknown>;
 
-  private allOrders = signal<Order[]>([]);
-  readonly statusFilter = signal<string>('');
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly allOrders = signal<Order[]>([]);
+
+  readonly statusFilter = signal<OrderStatus | ''>('');
   readonly orders = computed(() => {
     const status = this.statusFilter();
     const all = this.allOrders();
     return status ? all.filter(o => o.status === status) : all;
   });
 
-  form: FormGroup;
+  readonly statuses = ORDER_STATUSES;
+  readonly products = PRODUCTS;
+
+  readonly form: FormGroup;
 
   private modalRef?: NgbModalRef;
 
-  readonly statuses: OrderStatus[] = ['NEW', 'PROCESSED', 'FAILED'];
-  readonly products = PRODUCTS;
-
   constructor(
-    private orderService: OrderService,
-    private fb: FormBuilder,
-    private modalService: NgbModal
+    private readonly orderService: OrderService,
+    private readonly fb: FormBuilder,
+    private readonly modalService: NgbModal
   ) {
     this.form = this.fb.group({
       customerName: ['', Validators.required],
-      product: ['', Validators.required],
-      quantity: [1, [Validators.required, Validators.min(1)]]
+      product:      ['', Validators.required],
+      quantity:     [1,  [Validators.required, Validators.min(1)]]
     });
   }
+
+  get customerName(): FormControl { return this.form.get('customerName') as FormControl; }
+  get product(): FormControl       { return this.form.get('product') as FormControl; }
+  get quantity(): FormControl      { return this.form.get('quantity') as FormControl; }
 
   ngOnInit(): void {
     this.loadOrders();
   }
 
-  loadOrders(): void {
-    this.orderService.getOrders().subscribe({
-      next: (orders) => this.allOrders.set(orders ?? []),
-      error: () => alert('Error al cargar los pedidos')
-    });
+  onFilterChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as OrderStatus | '';
+    this.statusFilter.set(value);
   }
 
   openModal(): void {
@@ -64,24 +69,37 @@ export class OrderListComponent implements OnInit {
   submit(): void {
     if (this.form.invalid) return;
 
-    this.orderService.createOrder(this.form.value).subscribe({
-      next: () => {
-        this.closeModal();
-        this.statusFilter.set('');
-        this.loadOrders();
-      },
-      error: () => alert('Error al crear el pedido')
-    });
+    this.orderService.createOrder(this.form.value)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.closeModal();
+          this.statusFilter.set('');
+          this.loadOrders();
+        },
+        error: () => alert('Error al crear el pedido')
+      });
   }
 
   runBatch(): void {
-    this.orderService.runBatch().subscribe({
-      next: () => {
-        this.statusFilter.set('');
-        alert('Batch ejecutado correctamente');
-        this.loadOrders();
-      },
-      error: () => alert('Error al ejecutar el batch')
-    });
+    this.orderService.runBatch()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.statusFilter.set('');
+          alert('Batch ejecutado correctamente');
+          this.loadOrders();
+        },
+        error: () => alert('Error al ejecutar el batch')
+      });
+  }
+
+  private loadOrders(): void {
+    this.orderService.getOrders()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (orders) => this.allOrders.set(orders ?? []),
+        error: () => alert('Error al cargar los pedidos')
+      });
   }
 }

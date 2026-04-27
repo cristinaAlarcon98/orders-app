@@ -1,5 +1,7 @@
 export type OrderStatus = 'NEW' | 'PROCESSED' | 'FAILED';
 
+export const ORDER_STATUSES: OrderStatus[] = ['NEW', 'PROCESSED', 'FAILED'];
+
 export interface Order {
   id: number;
   customerName: string;
