@@ -1,18 +1,26 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3">{{ 'orders.title' | translate }}</h1>
-    <button class="btn btn-primary" (click)="openModal()">{{ 'orders.actions.create' | translate }}</button>
+    <h1 class="h3 mb-0">{{ 'orders.title' | translate }}</h1>
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" (click)="runBatch()">{{ 'orders.actions.runBatch' | translate }}</button>
+      <button class="btn btn-primary" (click)="openModal()">{{ 'orders.actions.create' | translate }}</button>
+    </div>
   </div>
 
   <div class="d-flex gap-2 mb-3">
+    <input
+      type="search"
+      class="form-control"
+      style="max-width: 220px"
+      [placeholder]="'orders.filter.search' | translate"
+      (input)="onSearchChange($event)"
+    />
     <select class="form-select w-auto" (change)="onFilterChange($event)">
       <option value="">{{ 'orders.filter.all' | translate }}</option>
       @for (s of statuses; track s) {
         <option [value]="s">{{ s }}</option>
       }
     </select>
-
-    <button class="btn btn-secondary" (click)="runBatch()">{{ 'orders.actions.runBatch' | translate }}</button>
   </div>
 
   <table class="table table-bordered table-hover">
@@ -34,7 +42,7 @@
           <td>{{ order.product }}</td>
           <td>{{ order.quantity }}</td>
           <td>
-            <span class="badge"
+            <span class="badge rounded-pill"
               [class.bg-warning]="order.status === 'NEW'"
               [class.text-dark]="order.status === 'NEW'"
               [class.bg-success]="order.status === 'PROCESSED'"

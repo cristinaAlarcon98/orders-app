@@ -3,11 +3,12 @@
     "title": "Pedidos",
     "actions": {
       "create": "Crear pedido",
-      "runBatch": "Ejecutar batch",
+      "runBatch": "Procesar pedidos",
       "cancel": "Cancelar"
     },
     "filter": {
-      "all": "Todos"
+      "all": "Todos",
+      "search": "Buscar..."
     },
     "table": {
       "id": "ID",

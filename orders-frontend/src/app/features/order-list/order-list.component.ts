@@ -21,10 +21,17 @@ export class OrderListComponent implements OnInit {
   private readonly allOrders = signal<Order[]>([]);
 
   readonly statusFilter = signal<OrderStatus | ''>('');
+  readonly searchTerm = signal<string>('');
   readonly orders = computed(() => {
     const status = this.statusFilter();
-    const all = this.allOrders();
-    return status ? all.filter(o => o.status === status) : all;
+    const search = this.searchTerm().toLowerCase().trim();
+    let result = this.allOrders();
+    if (status) result = result.filter(o => o.status === status);
+    if (search) result = result.filter(o =>
+      o.customerName.toLowerCase().includes(search) ||
+      o.product.toLowerCase().includes(search)
+    );
+    return result;
   });
 
   readonly statuses = ORDER_STATUSES;
@@ -52,6 +59,10 @@ export class OrderListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadOrders();
+  }
+
+  onSearchChange(event: Event): void {
+    this.searchTerm.set((event.target as HTMLInputElement).value);
   }
 
   onFilterChange(event: Event): void {
