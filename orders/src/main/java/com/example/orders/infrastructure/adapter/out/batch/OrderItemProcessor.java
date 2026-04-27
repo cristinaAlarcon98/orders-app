@@ -13,10 +13,10 @@ public class OrderItemProcessor implements ItemProcessor<Order, Order> {
 
     @Override
     public Order process(Order order) {
-        if (random.nextBoolean()) {
-            order.markAsProcessed();
-        } else {
+        if (random.nextInt(10) == 0) {
             order.markAsFailed();
+        } else {
+            order.markAsProcessed();
         }
         return order;
     }
