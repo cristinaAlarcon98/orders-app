@@ -1,6 +1,6 @@
 {
   "orders": {
-    "title": "Pedidos",
+    "title": "Gestión de pedidos",
     "actions": {
       "create": "Crear pedido",
       "runBatch": "Procesar pedidos",
