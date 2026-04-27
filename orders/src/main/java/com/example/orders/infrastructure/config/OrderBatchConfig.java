@@ -4,6 +4,7 @@ import com.example.orders.domain.model.Order;
 import com.example.orders.domain.model.OrderStatus;
 import com.example.orders.domain.port.out.OrderRepository;
 import com.example.orders.infrastructure.adapter.out.batch.OrderItemProcessor;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -19,6 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class OrderBatchConfig {
 
     @Bean
+    @StepScope
     public ItemReader<Order> orderItemReader(OrderRepository orderRepository) {
         return new ListItemReader<>(orderRepository.findByStatus(OrderStatus.NEW));
     }
