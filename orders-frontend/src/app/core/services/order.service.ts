@@ -14,6 +14,10 @@ export class OrderService {
     return this.http.get<Order[]>(this.apiUrl);
   }
 
+  getProducts(): Observable<string[]> {
+    return this.http.get<string[]>(`${environment.apiUrl}/products`);
+  }
+
   createOrder(request: CreateOrderRequest): Observable<Order> {
     return this.http.post<Order>(this.apiUrl, request);
   }

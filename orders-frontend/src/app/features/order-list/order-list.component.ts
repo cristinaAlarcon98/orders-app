@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { Order, ORDER_STATUSES, OrderStatus, PRODUCTS } from '../../shared/models/order.model';
+import { Order, ORDER_STATUSES, OrderStatus } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order.service';
 
 @Component({
@@ -35,7 +35,7 @@ export class OrderListComponent implements OnInit {
   });
 
   readonly statuses = ORDER_STATUSES;
-  readonly products = PRODUCTS;
+  readonly products = signal<string[]>([]);
 
   readonly form: FormGroup;
 
@@ -59,6 +59,7 @@ export class OrderListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadOrders();
+    this.loadProducts();
   }
 
   onSearchChange(event: Event): void {
@@ -113,6 +114,14 @@ export class OrderListComponent implements OnInit {
       .subscribe({
         next: (orders) => this.allOrders.set(orders ?? []),
         error: () => alert(this.translate.instant('orders.notifications.errorLoad'))
+      });
+  }
+
+  private loadProducts(): void {
+    this.orderService.getProducts()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (products) => this.products.set(products ?? [])
       });
   }
 }

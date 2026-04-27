@@ -91,7 +91,7 @@
           [class.is-invalid]="product.invalid && product.touched"
         >
           <option value="" disabled>{{ 'orders.form.product.placeholder' | translate }}</option>
-          @for (p of products; track p) {
+          @for (p of products(); track p) {
             <option [value]="p">{{ p }}</option>
           }
         </select>
