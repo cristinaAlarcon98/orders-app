@@ -22,6 +22,7 @@ export class OrderListComponent implements OnInit {
 
   readonly statusFilter = signal<OrderStatus | ''>('');
   readonly searchTerm = signal<string>('');
+  readonly hasNewOrders = computed(() => this.allOrders().some(o => o.status === 'NEW'));
   readonly orders = computed(() => {
     const status = this.statusFilter();
     const search = this.searchTerm().toLowerCase().trim();

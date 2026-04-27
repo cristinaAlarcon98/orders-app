@@ -35,7 +35,7 @@
       }
     },
     "notifications": {
-      "batchSuccess": "Batch ejecutado correctamente",
+      "batchSuccess": "Pedidos procesados correctamente",
       "errorLoad": "Error al cargar los pedidos",
       "errorCreate": "Error al crear el pedido",
       "errorBatch": "Error al ejecutar el batch"
