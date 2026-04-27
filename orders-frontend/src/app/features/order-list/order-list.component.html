@@ -1,13 +1,15 @@
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="h3">Pedidos</h1>
-    <a routerLink="/orders/new" class="btn btn-primary">Nuevo pedido</a>
+    <button class="btn btn-primary" (click)="openModal()">Crear pedido</button>
   </div>
 
   <div class="d-flex gap-2 mb-3">
     <select class="form-select w-auto" (change)="onStatusChange($any($event.target).value)">
       <option value="">Todos</option>
-      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      @for (s of statuses; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
     </select>
 
     <button class="btn btn-secondary" (click)="runBatch()">Ejecutar batch</button>
@@ -25,17 +27,74 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of orders">
-        <td>{{ order.id }}</td>
-        <td>{{ order.customerName }}</td>
-        <td>{{ order.product }}</td>
-        <td>{{ order.quantity }}</td>
-        <td>{{ order.status }}</td>
-        <td>{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
-      </tr>
-      <tr *ngIf="orders.length === 0">
-        <td colspan="6" class="text-center text-muted">No hay pedidos</td>
-      </tr>
+      @for (order of orders; track order.id) {
+        <tr>
+          <td>{{ order.id }}</td>
+          <td>{{ order.customerName }}</td>
+          <td>{{ order.product }}</td>
+          <td>{{ order.quantity }}</td>
+          <td>{{ order.status }}</td>
+          <td>{{ order.createdAt | date:'d MMM y, HH:mm' }}</td>
+        </tr>
+      }
+      @if (orders.length === 0) {
+        <tr>
+          <td colspan="6" class="text-center text-muted">No hay pedidos</td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>
+
+<ng-template #orderModal>
+  <div class="modal-header">
+    <h5 class="modal-title">Crear pedido</h5>
+    <button type="button" class="btn-close" (click)="closeModal()"></button>
+  </div>
+
+  <div class="modal-body">
+    <form [formGroup]="form" id="orderForm" (ngSubmit)="submit()">
+      <div class="mb-3">
+        <label class="form-label">Cliente</label>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="customerName"
+          placeholder="Nombre del cliente"
+          [class.is-invalid]="form.get('customerName')?.invalid && form.get('customerName')?.touched"
+        />
+        <div class="invalid-feedback">El nombre del cliente es obligatorio</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Producto</label>
+        <select
+          class="form-select"
+          formControlName="product"
+          [class.is-invalid]="form.get('product')?.invalid && form.get('product')?.touched"
+        >
+          <option value="" disabled>Seleccione un modelo</option>
+          @for (p of products; track p) {
+            <option [value]="p">{{ p }}</option>
+          }
+        </select>
+        <div class="invalid-feedback">El producto es obligatorio</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Unidades</label>
+        <input
+          type="number"
+          class="form-control"
+          formControlName="quantity"
+          min="1"
+        />
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Cancelar</button>
+    <button type="submit" form="orderForm" class="btn btn-primary" [disabled]="form.invalid">Crear pedido</button>
+  </div>
+</ng-template>

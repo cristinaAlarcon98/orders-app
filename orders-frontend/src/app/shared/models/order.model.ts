@@ -14,3 +14,16 @@ export interface CreateOrderRequest {
   product: string;
   quantity: number;
 }
+
+export const PRODUCTS = [
+  'Nike Air Max 90',
+  'Nike Air Force 1',
+  'Adidas Ultraboost',
+  'Adidas Stan Smith',
+  'New Balance 574',
+  'Converse Chuck Taylor',
+  'Vans Old Skool',
+  'Jordan 1 Retro High',
+  'Puma Suede Classic',
+  'Asics Gel-Nimbus'
+];
