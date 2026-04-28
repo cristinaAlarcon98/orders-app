@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { ToastService } from '../../core/services/toast.service';
 import { Subject, switchMap } from 'rxjs';
 import { Order, ORDER_STATUSES, OrderStatus } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order.service';
@@ -18,7 +19,7 @@ export class OrderListComponent implements OnInit {
   @ViewChild('orderModal') orderModal!: TemplateRef<unknown>;
 
   private readonly destroyRef = inject(DestroyRef);
-  private readonly translate = inject(TranslateService);
+  private readonly toastService = inject(ToastService);
   private readonly refresh$ = new Subject<void>();
   private readonly allOrders = signal<Order[]>([]);
 
@@ -38,6 +39,8 @@ export class OrderListComponent implements OnInit {
     );
     return result;
   });
+
+  private readonly DEFAULT_QUANTITY = 1;
 
   readonly statuses = ORDER_STATUSES;
   readonly products = signal<string[]>([]);
@@ -75,7 +78,7 @@ export class OrderListComponent implements OnInit {
       )
       .subscribe({
         next: (orders) => this.allOrders.set(orders ?? []),
-        error: () => alert(this.translate.instant('orders.notifications.errorLoad'))
+        error: () => this.toastService.error('orders.notifications.errorLoad')
       });
 
     this.refresh$.next();
@@ -99,8 +102,6 @@ export class OrderListComponent implements OnInit {
     this.modalRef?.close();
   }
 
-  private readonly DEFAULT_QUANTITY = 1;
-
   submit(): void {
     if (this.form.invalid || this.isSubmitting()) return;
 
@@ -110,13 +111,14 @@ export class OrderListComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isSubmitting.set(false);
+          this.toastService.success('orders.notifications.createSuccess');
           this.closeModal();
           this.statusFilter.set('');
           this.refresh$.next();
         },
         error: () => {
           this.isSubmitting.set(false);
-          alert(this.translate.instant('orders.notifications.errorCreate'));
+          this.toastService.error('orders.notifications.errorCreate');
         }
       });
   }
@@ -131,12 +133,12 @@ export class OrderListComponent implements OnInit {
         next: () => {
           this.isRunningBatch.set(false);
           this.statusFilter.set('');
-          alert(this.translate.instant('orders.notifications.batchSuccess'));
+          this.toastService.success('orders.notifications.batchSuccess');
           this.refresh$.next();
         },
         error: () => {
           this.isRunningBatch.set(false);
-          alert(this.translate.instant('orders.notifications.errorBatch'));
+          this.toastService.error('orders.notifications.errorBatch');
         }
       });
   }

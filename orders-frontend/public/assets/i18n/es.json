@@ -35,6 +35,7 @@
       }
     },
     "notifications": {
+      "createSuccess": "Pedido creado correctamente",
       "batchSuccess": "Pedidos procesados correctamente",
       "errorLoad": "Error al cargar los pedidos",
       "errorCreate": "Error al crear el pedido",
