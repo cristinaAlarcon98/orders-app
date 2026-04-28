@@ -1,45 +1,46 @@
 {
-  "orders": {
-    "title": "Gestión de pedidos",
-    "actions": {
-      "create": "Crear pedido",
-      "runBatch": "Procesar pedidos",
-      "cancel": "Cancelar"
+  "ORDERS": {
+    "TITLE": "Gestión de pedidos",
+    "ACTIONS": {
+      "CREATE": "Crear pedido",
+      "RUN_BATCH": "Procesar pedidos",
+      "CANCEL": "Cancelar"
     },
-    "filter": {
-      "all": "Todos",
-      "search": "Buscar..."
+    "FILTER": {
+      "ALL": "Todos",
+      "SEARCH": "Buscar..."
     },
-    "table": {
-      "id": "ID",
-      "customer": "Cliente",
-      "product": "Producto",
-      "quantity": "Cantidad",
-      "status": "Estado",
-      "date": "Fecha",
-      "empty": "No hay pedidos"
+    "TABLE": {
+      "ID": "ID",
+      "CUSTOMER": "Cliente",
+      "PRODUCT": "Producto",
+      "QUANTITY": "Cantidad",
+      "STATUS": "Estado",
+      "DATE": "Fecha",
+      "EMPTY": "No hay pedidos"
     },
-    "form": {
-      "customer": {
-        "label": "Cliente",
-        "placeholder": "Nombre del cliente",
-        "required": "El nombre del cliente es obligatorio"
+    "FORM": {
+      "CUSTOMER": {
+        "LABEL": "Cliente",
+        "PLACEHOLDER": "Nombre del cliente",
+        "REQUIRED": "El nombre del cliente es obligatorio"
       },
-      "product": {
-        "label": "Producto",
-        "placeholder": "Seleccione un producto",
-        "required": "El producto es obligatorio"
+      "PRODUCT": {
+        "LABEL": "Producto",
+        "PLACEHOLDER": "Selecciona un producto",
+        "REQUIRED": "El producto es obligatorio"
       },
-      "quantity": {
-        "label": "Unidades"
+      "QUANTITY": {
+        "LABEL": "Unidades",
+        "REQUIRED": "La cantidad mínima es 1"
       }
     },
-    "notifications": {
-      "createSuccess": "Pedido creado correctamente",
-      "batchSuccess": "Pedidos procesados correctamente",
-      "errorLoad": "Error al cargar los pedidos",
-      "errorCreate": "Error al crear el pedido",
-      "errorBatch": "Error al ejecutar el batch"
+    "NOTIFICATIONS": {
+      "CREATE_SUCCESS": "Pedido creado correctamente",
+      "BATCH_SUCCESS": "Pedidos procesados correctamente",
+      "ERROR_LOAD": "Error al cargar los pedidos",
+      "ERROR_CREATE": "Error al crear el pedido",
+      "ERROR_BATCH": "Error al ejecutar el batch"
     }
   }
 }

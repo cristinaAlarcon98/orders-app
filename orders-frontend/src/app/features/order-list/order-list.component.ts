@@ -70,7 +70,7 @@ export class OrderListComponent implements OnInit {
       )
       .subscribe({
         next: (orders) => this.allOrders.set(orders ?? []),
-        error: () => this.toastService.error('orders.notifications.errorLoad')
+        error: () => this.toastService.error('ORDERS.NOTIFICATIONS.ERROR_LOAD')
       });
 
     this.refresh$.next();
@@ -120,7 +120,7 @@ export class OrderListComponent implements OnInit {
 
   private onCreateSuccess(): void {
     this.isSubmitting.set(false);
-    this.toastService.success('orders.notifications.createSuccess');
+    this.toastService.success('ORDERS.NOTIFICATIONS.CREATE_SUCCESS');
     this.closeModal();
     this.statusFilter.set('');
     this.refresh$.next();
@@ -128,19 +128,19 @@ export class OrderListComponent implements OnInit {
 
   private onCreateError(): void {
     this.isSubmitting.set(false);
-    this.toastService.error('orders.notifications.errorCreate');
+    this.toastService.error('ORDERS.NOTIFICATIONS.ERROR_CREATE');
   }
 
   private onBatchSuccess(): void {
     this.isRunningBatch.set(false);
     this.statusFilter.set('');
-    this.toastService.success('orders.notifications.batchSuccess');
+    this.toastService.success('ORDERS.NOTIFICATIONS.BATCH_SUCCESS');
     this.refresh$.next();
   }
 
   private onBatchError(): void {
     this.isRunningBatch.set(false);
-    this.toastService.error('orders.notifications.errorBatch');
+    this.toastService.error('ORDERS.NOTIFICATIONS.ERROR_BATCH');
   }
 
   private loadProducts(): void {

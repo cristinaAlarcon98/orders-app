@@ -1,9 +1,9 @@
 <div class="container py-5 px-4">
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-5">
-    <h1 class="h3 mb-0">{{ 'orders.title' | translate }}</h1>
+    <h1 class="h3 mb-0">{{ 'ORDERS.TITLE' | translate }}</h1>
     <div class="d-flex gap-2 flex-shrink-0">
-      <button class="btn btn-primary" (click)="runBatch()" [disabled]="!hasNewOrders() || isRunningBatch()">{{ 'orders.actions.runBatch' | translate }}</button>
-      <button class="btn btn-primary" (click)="openModal()" [disabled]="isSubmitting()">{{ 'orders.actions.create' | translate }}</button>
+      <button class="btn btn-primary" (click)="runBatch()" [disabled]="!hasNewOrders() || isRunningBatch()">{{ 'ORDERS.ACTIONS.RUN_BATCH' | translate }}</button>
+      <button class="btn btn-primary" (click)="openModal()" [disabled]="isSubmitting()">{{ 'ORDERS.ACTIONS.CREATE' | translate }}</button>
     </div>
   </div>
 
@@ -11,11 +11,11 @@
     <input
       type="search"
       class="form-control w-auto"
-      [placeholder]="'orders.filter.search' | translate"
+      [placeholder]="'ORDERS.FILTER.SEARCH' | translate"
       (input)="onSearchChange($event)"
     />
     <select class="form-select w-auto" (change)="onFilterChange($event)">
-      <option value="">{{ 'orders.filter.all' | translate }}</option>
+      <option value="">{{ 'ORDERS.FILTER.ALL' | translate }}</option>
       @for (s of statuses; track s) {
         <option [value]="s">{{ s }}</option>
       }
@@ -26,12 +26,12 @@
   <table class="table table-bordered table-hover">
     <thead class="table-dark sticky-top">
       <tr>
-        <th>{{ 'orders.table.id' | translate }}</th>
-        <th>{{ 'orders.table.customer' | translate }}</th>
-        <th>{{ 'orders.table.product' | translate }}</th>
-        <th>{{ 'orders.table.quantity' | translate }}</th>
-        <th>{{ 'orders.table.status' | translate }}</th>
-        <th>{{ 'orders.table.date' | translate }}</th>
+        <th>{{ 'ORDERS.TABLE.ID' | translate }}</th>
+        <th>{{ 'ORDERS.TABLE.CUSTOMER' | translate }}</th>
+        <th>{{ 'ORDERS.TABLE.PRODUCT' | translate }}</th>
+        <th>{{ 'ORDERS.TABLE.QUANTITY' | translate }}</th>
+        <th>{{ 'ORDERS.TABLE.STATUS' | translate }}</th>
+        <th>{{ 'ORDERS.TABLE.DATE' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -54,7 +54,7 @@
         </tr>
       } @empty {
         <tr>
-          <td colspan="6" class="text-center text-muted">{{ 'orders.table.empty' | translate }}</td>
+          <td colspan="6" class="text-center text-muted">{{ 'ORDERS.TABLE.EMPTY' | translate }}</td>
         </tr>
       }
     </tbody>
@@ -64,53 +64,58 @@
 
 <ng-template #orderModal>
   <div class="modal-header">
-    <h5 class="modal-title">{{ 'orders.actions.create' | translate }}</h5>
+    <h5 class="modal-title">{{ 'ORDERS.ACTIONS.CREATE' | translate }}</h5>
     <button type="button" class="btn-close" (click)="closeModal()"></button>
   </div>
 
   <div class="modal-body">
     <form [formGroup]="form" id="orderForm" (ngSubmit)="submit()">
       <div class="mb-3">
-        <label class="form-label">{{ 'orders.form.customer.label' | translate }}</label>
+        <label for="customerName" class="form-label">{{ 'ORDERS.FORM.CUSTOMER.LABEL' | translate }}</label>
         <input
+          id="customerName"
           type="text"
           class="form-control"
           formControlName="customerName"
-          [placeholder]="'orders.form.customer.placeholder' | translate"
+          [placeholder]="'ORDERS.FORM.CUSTOMER.PLACEHOLDER' | translate"
           [class.is-invalid]="customerName.invalid && customerName.touched"
         />
-        <div class="invalid-feedback">{{ 'orders.form.customer.required' | translate }}</div>
+        <div class="invalid-feedback">{{ 'ORDERS.FORM.CUSTOMER.REQUIRED' | translate }}</div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">{{ 'orders.form.product.label' | translate }}</label>
+        <label for="product" class="form-label">{{ 'ORDERS.FORM.PRODUCT.LABEL' | translate }}</label>
         <select
+          id="product"
           class="form-select"
           formControlName="product"
           [class.is-invalid]="product.invalid && product.touched"
         >
-          <option value="" disabled>{{ 'orders.form.product.placeholder' | translate }}</option>
+          <option value="" disabled>{{ 'ORDERS.FORM.PRODUCT.PLACEHOLDER' | translate }}</option>
           @for (p of products(); track p) {
             <option [value]="p">{{ p }}</option>
           }
         </select>
-        <div class="invalid-feedback">{{ 'orders.form.product.required' | translate }}</div>
+        <div class="invalid-feedback">{{ 'ORDERS.FORM.PRODUCT.REQUIRED' | translate }}</div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">{{ 'orders.form.quantity.label' | translate }}</label>
+        <label for="quantity" class="form-label">{{ 'ORDERS.FORM.QUANTITY.LABEL' | translate }}</label>
         <input
+          id="quantity"
           type="number"
           class="form-control"
           formControlName="quantity"
           min="1"
+          [class.is-invalid]="quantity.invalid && quantity.touched"
         />
+        <div class="invalid-feedback">{{ 'ORDERS.FORM.QUANTITY.REQUIRED' | translate }}</div>
       </div>
     </form>
   </div>
 
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">{{ 'orders.actions.cancel' | translate }}</button>
-    <button type="submit" form="orderForm" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">{{ 'orders.actions.create' | translate }}</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">{{ 'ORDERS.ACTIONS.CANCEL' | translate }}</button>
+    <button type="submit" form="orderForm" class="btn btn-primary" [disabled]="form.invalid || isSubmitting()">{{ 'ORDERS.ACTIONS.CREATE' | translate }}</button>
   </div>
 </ng-template>
