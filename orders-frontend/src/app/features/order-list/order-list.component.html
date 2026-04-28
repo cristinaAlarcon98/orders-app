@@ -52,8 +52,7 @@
           </td>
           <td>{{ order.createdAt | date:'d MMM y, HH:mm' }}</td>
         </tr>
-      }
-      @if (orders().length === 0) {
+      } @empty {
         <tr>
           <td colspan="6" class="text-center text-muted">{{ 'orders.table.empty' | translate }}</td>
         </tr>
