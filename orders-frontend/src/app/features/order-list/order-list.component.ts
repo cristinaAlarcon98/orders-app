@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Subject, switchMap } from 'rxjs';
 import { Order, ORDER_STATUSES, OrderStatus } from '../../shared/models/order.model';
 import { OrderService } from '../../core/services/order.service';
 
@@ -18,10 +19,13 @@ export class OrderListComponent implements OnInit {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly translate = inject(TranslateService);
+  private readonly refresh$ = new Subject<void>();
   private readonly allOrders = signal<Order[]>([]);
 
   readonly statusFilter = signal<OrderStatus | ''>('');
   readonly searchTerm = signal<string>('');
+  readonly isSubmitting = signal(false);
+  readonly isRunningBatch = signal(false);
   readonly hasNewOrders = computed(() => this.allOrders().some(o => o.status === 'NEW'));
   readonly orders = computed(() => {
     const status = this.statusFilter();
@@ -59,8 +63,22 @@ export class OrderListComponent implements OnInit {
   get quantity(): FormControl      { return this.form.get('quantity') as FormControl; }
 
   ngOnInit(): void {
-    this.loadOrders();
+    this.initOrdersStream();
     this.loadProducts();
+  }
+
+  private initOrdersStream(): void {
+    this.refresh$
+      .pipe(
+        switchMap(() => this.orderService.getOrders()),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (orders) => this.allOrders.set(orders ?? []),
+        error: () => alert(this.translate.instant('orders.notifications.errorLoad'))
+      });
+
+    this.refresh$.next();
   }
 
   onSearchChange(event: Event): void {
@@ -73,7 +91,7 @@ export class OrderListComponent implements OnInit {
   }
 
   openModal(): void {
-    this.form.reset({ customerName: '', product: '', quantity: 1 });
+    this.form.reset({ customerName: '', product: '', quantity: this.DEFAULT_QUANTITY });
     this.modalRef = this.modalService.open(this.orderModal);
   }
 
@@ -81,40 +99,45 @@ export class OrderListComponent implements OnInit {
     this.modalRef?.close();
   }
 
-  submit(): void {
-    if (this.form.invalid) return;
+  private readonly DEFAULT_QUANTITY = 1;
 
+  submit(): void {
+    if (this.form.invalid || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
     this.orderService.createOrder(this.form.value)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          this.isSubmitting.set(false);
           this.closeModal();
           this.statusFilter.set('');
-          this.loadOrders();
+          this.refresh$.next();
         },
-        error: () => alert(this.translate.instant('orders.notifications.errorCreate'))
+        error: () => {
+          this.isSubmitting.set(false);
+          alert(this.translate.instant('orders.notifications.errorCreate'));
+        }
       });
   }
 
   runBatch(): void {
+    if (this.isRunningBatch()) return;
+
+    this.isRunningBatch.set(true);
     this.orderService.runBatch()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
+          this.isRunningBatch.set(false);
           this.statusFilter.set('');
           alert(this.translate.instant('orders.notifications.batchSuccess'));
-          this.loadOrders();
+          this.refresh$.next();
         },
-        error: () => alert(this.translate.instant('orders.notifications.errorBatch'))
-      });
-  }
-
-  private loadOrders(): void {
-    this.orderService.getOrders()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (orders) => this.allOrders.set(orders ?? []),
-        error: () => alert(this.translate.instant('orders.notifications.errorLoad'))
+        error: () => {
+          this.isRunningBatch.set(false);
+          alert(this.translate.instant('orders.notifications.errorBatch'));
+        }
       });
   }
 
