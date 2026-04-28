@@ -1,7 +1,7 @@
 import { Component, DestroyRef, OnInit, TemplateRef, ViewChild, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ToastService } from '../../core/services/toast.service';
@@ -19,10 +19,15 @@ export class OrderListComponent implements OnInit {
   @ViewChild('orderModal') orderModal!: TemplateRef<unknown>;
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly orderService = inject(OrderService);
   private readonly toastService = inject(ToastService);
+  private readonly modalService = inject(NgbModal);
+  private readonly fb = inject(FormBuilder);
   private readonly refresh$ = new Subject<void>();
-  private readonly allOrders = signal<Order[]>([]);
+  private readonly DEFAULT_QUANTITY = 1;
+  private modalRef?: NgbModalRef;
 
+  private readonly allOrders = signal<Order[]>([]);
   readonly statusFilter = signal<OrderStatus | ''>('');
   readonly searchTerm = signal<string>('');
   readonly isSubmitting = signal(false);
@@ -40,26 +45,13 @@ export class OrderListComponent implements OnInit {
     return result;
   });
 
-  private readonly DEFAULT_QUANTITY = 1;
-
   readonly statuses = ORDER_STATUSES;
   readonly products = signal<string[]>([]);
-
-  readonly form: FormGroup;
-
-  private modalRef?: NgbModalRef;
-
-  constructor(
-    private readonly orderService: OrderService,
-    private readonly fb: FormBuilder,
-    private readonly modalService: NgbModal
-  ) {
-    this.form = this.fb.group({
-      customerName: ['', Validators.required],
-      product:      ['', Validators.required],
-      quantity:     [1,  [Validators.required, Validators.min(1)]]
-    });
-  }
+  readonly form = this.fb.group({
+    customerName: ['', Validators.required],
+    product:      ['', Validators.required],
+    quantity:     [this.DEFAULT_QUANTITY, [Validators.required, Validators.min(1)]]
+  });
 
   get customerName(): FormControl { return this.form.get('customerName') as FormControl; }
   get product(): FormControl       { return this.form.get('product') as FormControl; }
